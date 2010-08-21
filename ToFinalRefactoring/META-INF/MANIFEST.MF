@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ToFinal Plug-in
+Bundle-SymbolicName: ToFinalRefactoring;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: arz.refactorings.ToFinalPlugin
+Bundle-Vendor: Arnulfo Rodriguez
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ltk.core.refactoring,
+ org.eclipse.ltk.ui.refactoring,
+ org.eclipse.jdt.core,
+ org.eclipse.jdt.ui,
+ org.eclipse.jface.text,
+ org.eclipse.core.resources,
+ org.eclipse.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Import-Package: org.eclipse.jdt.core.refactoring

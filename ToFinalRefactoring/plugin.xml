@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.refactoringContributions">
+      <contribution
+            class="arz.refactorings.ToFinalRefactoringContribution"
+            id="arz.refactorings.string.to.final"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="arz.refactorings.actionSet"
+            label="My Refactorings Actions"
+            visible="true">
+         <menu
+               id="myrefactorings"
+               label="My Refactorings">
+              <separator name="stringToFinal">
+              </separator>
+         </menu>
+         <action
+               class="arz.refactorings.ToFinalAction"
+               id="arz.refactorings.StringToFinalAction"
+               label="To Final ..."
+               menubarPath="myrefactorings/stringToFinal"
+               tooltip="To Final ...">
+        </action>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            description="Arnulfo Refactoring Actions"
+            id="arz.refactorings.category"
+            name="Refactor - Arnulfo Tests"/>
+      <command
+            categoryId="arz.refactorings.category"
+            description="Adds final to a literal declaration"
+            id="arz.refactorings.string.to.final"
+            name="To Final"/>
+   </extension>
+</plugin>
