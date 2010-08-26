@@ -1,5 +1,8 @@
 package arz.refactorings;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.Flags;
@@ -19,10 +22,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-@SuppressWarnings("restriction")
-public class ToFinalAction implements IWorkbenchWindowActionDelegate {
+public class ToFinalCmdHandler extends AbstractHandler {
 
 	private SourceField fField;
 	private ICompilationUnit fCompilationUnit;
@@ -36,7 +37,7 @@ public class ToFinalAction implements IWorkbenchWindowActionDelegate {
 		fWindow = window;
 	}
 
-	public void run(IAction action) {
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		if (fField != null && fCompilationUnit != null) {
 			ToFinalRefactoring refactoring = new ToFinalRefactoring();
 			refactoring.setField((SourceField) fField);
@@ -44,6 +45,7 @@ public class ToFinalAction implements IWorkbenchWindowActionDelegate {
 			run(new ToFinalWizard(refactoring), fWindow.getShell(),
 					"String to final");
 		}
+		return null;
 	}
 
 	public void run(RefactoringWizard wizard, Shell parent, String dialogTitle) {

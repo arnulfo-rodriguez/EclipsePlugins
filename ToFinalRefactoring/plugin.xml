@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.2"?>
+<?eclipse version="3.4"?>
 <plugin>
    <extension
          point="org.eclipse.ltk.core.refactoring.refactoringContributions">
@@ -8,36 +8,32 @@
             id="arz.refactorings.string.to.final"/>
    </extension>
    <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            id="arz.refactorings.actionSet"
-            label="My Refactorings Actions"
-            visible="true">
-         <menu
-               id="myrefactorings"
-               label="My Refactorings">
-              <separator name="stringToFinal">
-              </separator>
-         </menu>
-         <action
-               class="arz.refactorings.ToFinalAction"
-               id="arz.refactorings.StringToFinalAction"
-               label="To Final ..."
-               menubarPath="myrefactorings/stringToFinal"
-               tooltip="To Final ...">
-        </action>
-      </actionSet>
-   </extension>
-   <extension
          point="org.eclipse.ui.commands">
       <category
             description="Arnulfo Refactoring Actions"
             id="arz.refactorings.category"
             name="Refactor - Arnulfo Tests"/>
       <command
-            categoryId="arz.refactorings.category"
+            categoryId="org.eclipse.jdt.ui.category.refactoring"
+            defaultHandler="arz.refactorings.ToFinalCmdHandler"
             description="Adds final to a literal declaration"
             id="arz.refactorings.string.to.final"
             name="To Final"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="arz.my.refactorings.menu"
+               label="My Refactorings">
+            <command
+                  commandId="arz.refactorings.string.to.final"
+                  label="To Final..."
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
    </extension>
 </plugin>
