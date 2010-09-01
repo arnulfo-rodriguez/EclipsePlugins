@@ -15,10 +15,33 @@
             name="Refactor - Arnulfo Tests"/>
       <command
             categoryId="org.eclipse.jdt.ui.category.refactoring"
-            defaultHandler="arz.refactorings.ToFinalCmdHandler"
             description="Adds final to a literal declaration"
             id="arz.refactorings.string.to.final"
-            name="To Final"/>
+            name="To Final">
+            <commandParameter
+                  id="%command.fField"
+                  name="fField"
+                  optional="false">
+            </commandParameter>
+     </command>
+   
+   </extension>
+    <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            commandId="arz.refactorings.string.to.final"
+            class="arz.refactorings.ToFinalCmdHandler">
+            <enabledWhen>
+               <with variable="selection">
+                 <or>
+                   <instanceof value="org.eclipse.jface.text.ITextSelection"> 
+                  </instanceof>
+                  <instanceof value="org.eclipse.jface.viewers.IStructuredSelection"> 
+                  </instanceof> 
+                 </or>
+               </with>
+            </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">

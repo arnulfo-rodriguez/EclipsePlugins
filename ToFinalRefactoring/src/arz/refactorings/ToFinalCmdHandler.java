@@ -22,27 +22,23 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 public class ToFinalCmdHandler extends AbstractHandler {
 
 	private SourceField fField;
 	private ICompilationUnit fCompilationUnit;
-	private IWorkbenchWindow fWindow;
 
 	public void dispose() {
 		// Do nothing
 	}
 
-	public void init(IWorkbenchWindow window) {
-		fWindow = window;
-	}
-
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		if (fField != null && fCompilationUnit != null) {
+		if (selectionChanged(HandlerUtil.getCurrentSelection(event), event)) {
 			ToFinalRefactoring refactoring = new ToFinalRefactoring();
 			refactoring.setField((SourceField) fField);
 			refactoring.setCompilationUnit(fCompilationUnit);
-			run(new ToFinalWizard(refactoring), fWindow.getShell(),
+			run(new ToFinalWizard(refactoring), HandlerUtil.getActiveShell(event),
 					"String to final");
 		}
 		return null;
@@ -60,8 +56,8 @@ public class ToFinalCmdHandler extends AbstractHandler {
 
 	// I don't like having to use this method, i'd rather make this work
 	// like the built in refactorings.
-	private ICompilationUnit CompilationUnitForCurrentEditor() {
-		IEditorPart editorSite = fWindow.getActivePage().getActiveEditor();
+	private ICompilationUnit CompilationUnitForCurrentEditor(ExecutionEvent event) {
+		IEditorPart editorSite = HandlerUtil.getActiveEditor(event);
 		IEditorInput editorInput = editorSite.getEditorInput();
 		IResource resource = (IResource) editorInput
 				.getAdapter(IResource.class);
@@ -70,9 +66,9 @@ public class ToFinalCmdHandler extends AbstractHandler {
 		return icu;
 	}
 
-	public void selectionChanged(IAction action, ISelection selection) {
+	public boolean selectionChanged(ISelection selection, ExecutionEvent event) {
 		fField = null;
-		fCompilationUnit = CompilationUnitForCurrentEditor();
+		fCompilationUnit = CompilationUnitForCurrentEditor(event);
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection extended = (IStructuredSelection) selection;
 			Object[] elements = extended.toArray();
@@ -88,13 +84,13 @@ public class ToFinalCmdHandler extends AbstractHandler {
 		}
 
 		try {
-			action.setEnabled(fField != null && fField.exists()
+			return fField != null && fField.exists()
 					&& fField.isStructureKnown()
 					&& !fField.getDeclaringType().isAnnotation()
 					&& Flags.isPrivate(fField.getFlags())
-					&& !Flags.isFinal(fField.getFlags()));
+					&& !Flags.isFinal(fField.getFlags());
 		} catch (JavaModelException exception) {
-			action.setEnabled(false);
+			return false;
 		}
 	}
 
