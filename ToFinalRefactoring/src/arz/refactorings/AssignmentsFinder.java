@@ -40,10 +40,6 @@ public class AssignmentsFinder extends ASTVisitor {
 		return finlineInitializationExpression != null && !isAssigned;
 	}
 
-	ASTNode getConstantAssignment() {
-		return finlineInitializationExpression;
-	}
-
 	// -- visit methods
 	@Override
 	public boolean visit(Assignment assignment) {

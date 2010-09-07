@@ -34,7 +34,7 @@ public class ToFinalCmdHandler extends AbstractHandler {
 	}
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		if (selectionChanged(HandlerUtil.getCurrentSelection(event), event)) {
+		if (isSelectionValidForRefactoring(HandlerUtil.getCurrentSelection(event), event)) {
 			ToFinalRefactoring refactoring = new ToFinalRefactoring();
 			refactoring.setField((SourceField) fField);
 			refactoring.setCompilationUnit(fCompilationUnit);
@@ -66,19 +66,19 @@ public class ToFinalCmdHandler extends AbstractHandler {
 		return icu;
 	}
 
-	public boolean selectionChanged(ISelection selection, ExecutionEvent event) {
+	public boolean isSelectionValidForRefactoring(ISelection selection, ExecutionEvent event) {
 		fField = null;
 		fCompilationUnit = CompilationUnitForCurrentEditor(event);
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection extended = (IStructuredSelection) selection;
 			Object[] elements = extended.toArray();
-			fField = getSelectedField(elements, fCompilationUnit);
+			fField = AstTools.getSelectedField(elements, fCompilationUnit);
 		} else if (selection instanceof ITextSelection) {
 			try {
 				IJavaElement[] elements = SelectionConverter.codeResolve(
 						(IJavaElement) fCompilationUnit,
 						(ITextSelection) selection);
-				fField = getSelectedField(elements, fCompilationUnit);
+				fField = AstTools.getSelectedField(elements, fCompilationUnit);
 			} catch (JavaModelException e) {
 			}
 		}
@@ -92,15 +92,6 @@ public class ToFinalCmdHandler extends AbstractHandler {
 		} catch (JavaModelException exception) {
 			return false;
 		}
-	}
-
-	private SourceField getSelectedField(Object[] elements,
-			ICompilationUnit compilationUnit) {
-		SourceField vField = null;
-		if (elements.length == 1 && elements[0] instanceof SourceField) {
-			vField = (SourceField) elements[0];
-		}
-		return vField;
 	}
 
 }

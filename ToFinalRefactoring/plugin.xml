@@ -18,11 +18,6 @@
             description="Adds final to a literal declaration"
             id="arz.refactorings.string.to.final"
             name="To Final">
-            <commandParameter
-                  id="%command.fField"
-                  name="fField"
-                  optional="false">
-            </commandParameter>
      </command>
    
    </extension>
