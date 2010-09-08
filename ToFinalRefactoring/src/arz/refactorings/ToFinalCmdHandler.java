@@ -33,12 +33,16 @@ public class ToFinalCmdHandler extends AbstractHandler {
    @Override
    public Object execute(ExecutionEvent event) throws ExecutionException {
       updateDataFromSelection(HandlerUtil.getCurrentSelection(event), event);
+      startWizard(new ToFinalWizard(createToFinalRefactoring()),
+            HandlerUtil.getActiveShell(event), "String to final");
+      return null;
+   }
+
+   private ToFinalRefactoring createToFinalRefactoring() {
       ToFinalRefactoring refactoring = new ToFinalRefactoring();
       refactoring.setField(fField);
       refactoring.setCompilationUnit(fCompilationUnit);
-      startWizard(new ToFinalWizard(refactoring),
-            HandlerUtil.getActiveShell(event), "String to final");
-      return null;
+      return refactoring;
    }
 
    public void startWizard(RefactoringWizard wizard, Shell parent,
