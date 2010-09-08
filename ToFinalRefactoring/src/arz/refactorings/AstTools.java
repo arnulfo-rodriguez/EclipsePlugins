@@ -9,21 +9,22 @@ import org.eclipse.jdt.internal.core.SourceField;
 
 public class AstTools {
 
-	static CompilationUnit ParseToJavaAst(IProgressMonitor monitor,ICompilationUnit compilationUnit) {
-		ASTParser parser = ASTParser.newParser(AST.JLS3);
-		parser.setSource(compilationUnit);
-		parser.setResolveBindings(true);
-		parser.setBindingsRecovery(true);
-		return (CompilationUnit) parser.createAST(monitor);
-	}
+   static CompilationUnit ParseToJavaAst(IProgressMonitor monitor,
+         ICompilationUnit compilationUnit) {
+      ASTParser parser = ASTParser.newParser(AST.JLS3);
+      parser.setSource(compilationUnit);
+      parser.setResolveBindings(true);
+      parser.setBindingsRecovery(true);
+      return (CompilationUnit) parser.createAST(monitor);
+   }
 
-	static SourceField getSelectedField(Object[] elements,
-			ICompilationUnit compilationUnit) {
-		SourceField vField = null;
-		if (elements.length == 1 && elements[0] instanceof SourceField) {
-			vField = (SourceField) elements[0];
-		}
-		return vField;
-	}
+   static SourceField getSelectedField(Object[] elements,
+         ICompilationUnit compilationUnit) {
+      SourceField vField = null;
+      if (elements.length == 1 && elements[0] instanceof SourceField) {
+         vField = (SourceField) elements[0];
+      }
+      return vField;
+   }
 
 }
