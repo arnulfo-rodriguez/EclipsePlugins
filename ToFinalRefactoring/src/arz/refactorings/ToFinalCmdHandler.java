@@ -58,8 +58,8 @@ public class ToFinalCmdHandler extends AbstractHandler {
 
    // I don't like having to use this method, i'd rather make this work
    // like the built in refactorings.
-   private ICompilationUnit CompilationUnitForCurrentEditor(ExecutionEvent event) {
-      IEditorPart editorSite = HandlerUtil.getActiveEditor(event);
+   private ICompilationUnit getCompilationUnitForCurrentEditor(ExecutionEvent theEvent) {
+      IEditorPart editorSite = HandlerUtil.getActiveEditor(theEvent);
       IEditorInput editorInput = editorSite.getEditorInput();
       IResource resource = (IResource) editorInput.getAdapter(IResource.class);
       ICompilationUnit icu = JavaCore
@@ -70,7 +70,7 @@ public class ToFinalCmdHandler extends AbstractHandler {
    public void updateDataFromSelection(ISelection selection,
          ExecutionEvent event) {
       fField = null;
-      fCompilationUnit = CompilationUnitForCurrentEditor(event);
+      fCompilationUnit = getCompilationUnitForCurrentEditor(event);
       if (selection instanceof IStructuredSelection) {
          IStructuredSelection extended = (IStructuredSelection) selection;
          Object[] elements = extended.toArray();

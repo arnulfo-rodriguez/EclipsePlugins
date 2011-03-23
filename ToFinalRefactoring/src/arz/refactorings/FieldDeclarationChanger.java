@@ -16,7 +16,7 @@ abstract class FieldDeclarationChanger {
       this.fAst = ast;
    }
 
-   public void applyEdition(ASTRewrite astRewrite, MultiTextEdit root)
+   public void applyEdition(ASTRewrite astRewrite)
          throws JavaModelException {
       FieldDeclaration newFieldDeclaration = (FieldDeclaration) ASTNode
             .copySubtree(fAst, fFieldDeclaration);
