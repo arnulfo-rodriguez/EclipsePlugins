@@ -21,7 +21,6 @@ abstract class FieldDeclarationChanger {
       FieldDeclaration newFieldDeclaration = (FieldDeclaration) ASTNode
             .copySubtree(fAst, fFieldDeclaration);
       editFieldDeclaration(newFieldDeclaration);
-      astRewrite.remove(fFieldDeclaration, null);
       astRewrite.replace(fFieldDeclaration, newFieldDeclaration, null);
    }
 

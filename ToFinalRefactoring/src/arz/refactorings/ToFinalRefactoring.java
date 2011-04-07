@@ -106,10 +106,11 @@ public class ToFinalRefactoring extends Refactoring {
 
 	private Change createChangeFromAstRewrite(ASTRewrite astRewrite)
 			throws JavaModelException {
+		MultiTextEdit edit = new MultiTextEdit();
+		edit.addChild(astRewrite.rewriteAST());
 		CompilationUnitChange compilationUnitChange = new CompilationUnitChange(
 				"Make field Final", fCompilationUnit);
-		compilationUnitChange.setEdit(new MultiTextEdit());
-		compilationUnitChange.getEdit().addChild(astRewrite.rewriteAST());
+		compilationUnitChange.setEdit(edit);
 		return compilationUnitChange;
 	}
 
