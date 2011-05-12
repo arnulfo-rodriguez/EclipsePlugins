@@ -1,5 +1,6 @@
 package arz.refactorings;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -12,6 +13,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IVariableBinding;
+import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -46,7 +48,6 @@ public class ToFinalRefactoring extends Refactoring {
 								ModifierKeyword.FINAL_KEYWORD));
 			}
 		}.applyEdition(astRewrite);
-
 	}
 
 	@Override
@@ -106,11 +107,9 @@ public class ToFinalRefactoring extends Refactoring {
 
 	private Change createChangeFromAstRewrite(ASTRewrite astRewrite)
 			throws JavaModelException {
-		MultiTextEdit edit = new MultiTextEdit();
-		edit.addChild(astRewrite.rewriteAST());
 		CompilationUnitChange compilationUnitChange = new CompilationUnitChange(
 				"Make field Final", fCompilationUnit);
-		compilationUnitChange.setEdit(edit);
+		compilationUnitChange.setEdit(astRewrite.rewriteAST());
 		return compilationUnitChange;
 	}
 
