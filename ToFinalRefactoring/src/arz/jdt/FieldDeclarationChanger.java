@@ -1,4 +1,4 @@
-package arz.refactorings;
+package arz.jdt;
 
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
@@ -7,7 +7,7 @@ import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.MultiTextEdit;
 
-abstract class FieldDeclarationChanger {
+public abstract class FieldDeclarationChanger {
    private FieldDeclaration fFieldDeclaration;
    private AST fAst;
 

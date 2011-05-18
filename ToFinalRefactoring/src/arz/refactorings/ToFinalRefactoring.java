@@ -26,6 +26,9 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.text.edits.MultiTextEdit;
+import arz.jdt.AssignmentsFinder;
+import arz.jdt.AstTools;
+import arz.jdt.FieldDeclarationChanger;
 
 public class ToFinalRefactoring extends Refactoring {
 

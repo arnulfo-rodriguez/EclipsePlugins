@@ -1,4 +1,4 @@
-package arz.refactorings;
+package arz.jdt;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -9,7 +9,7 @@ import org.eclipse.jdt.internal.core.SourceField;
 
 public class AstTools {
 
-   static CompilationUnit ParseToJavaAst(IProgressMonitor monitor,
+   public static CompilationUnit ParseToJavaAst(IProgressMonitor monitor,
          ICompilationUnit compilationUnit) {
       ASTParser parser = ASTParser.newParser(AST.JLS3);
       parser.setSource(compilationUnit);
@@ -18,7 +18,7 @@ public class AstTools {
       return (CompilationUnit) parser.createAST(monitor);
    }
 
-   static SourceField getSelectedField(Object[] elements,
+   public static SourceField getSelectedField(Object[] elements,
          ICompilationUnit compilationUnit) {
       SourceField vField = null;
       if (elements.length == 1 && elements[0] instanceof SourceField) {

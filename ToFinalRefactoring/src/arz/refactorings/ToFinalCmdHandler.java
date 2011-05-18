@@ -21,6 +21,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import arz.jdt.AstTools;
+
 public class ToFinalCmdHandler extends AbstractHandler {
 
    private SourceField fField;

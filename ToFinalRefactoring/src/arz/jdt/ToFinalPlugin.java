@@ -1,4 +1,4 @@
-package arz.refactorings;
+package arz.jdt;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;

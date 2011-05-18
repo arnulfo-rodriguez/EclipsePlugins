@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: ToFinal Plug-in
 Bundle-SymbolicName: ToFinalRefactoring;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: arz.refactorings.ToFinalPlugin
+Bundle-Activator: arz.jdt.ToFinalPlugin
 Bundle-Vendor: Arnulfo Rodriguez
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ltk.core.refactoring,

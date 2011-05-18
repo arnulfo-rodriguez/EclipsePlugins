@@ -1,4 +1,4 @@
-package arz.refactorings;
+package arz.jdt;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -18,7 +18,7 @@ public class AssignmentsFinder extends ASTVisitor {
    private IVariableBinding fVariable;
    private ASTNode finlineInitializationExpression = null;
 
-   AssignmentsFinder(IVariableBinding binding) {
+   public AssignmentsFinder(IVariableBinding binding) {
       fVariable = binding;
    }
 
@@ -43,11 +43,10 @@ public class AssignmentsFinder extends ASTVisitor {
    // -- visit methods
    @Override
    public boolean visit(Assignment assignment) {
-      if (!isAssignmentToVariable(assignment))
-         return true;
-
-      isAssigned = true;
-      return false;
+      if (isAssignmentToVariable(assignment)){
+          isAssigned = true;
+      }
+      return true;
    }
 
    @Override
@@ -88,6 +87,6 @@ public class AssignmentsFinder extends ASTVisitor {
             && ASTNodes.isLiteral(fragment.getInitializer())) {
          finlineInitializationExpression = fragment.getInitializer();
       }
-      return false;
+      return true;
    }
 }
