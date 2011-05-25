@@ -54,4 +54,13 @@
          </menu>
       </menuContribution>
    </extension>
+   <extension
+         point="org.eclipse.jdt.ui.quickAssistProcessors">
+      <quickAssistProcessor
+            id="ToFinalRefactoring.quickAssistProcessor1"
+            name="ToFinalRefactoring.quickAssistProcessor"
+            class="arz.assists.ToFinalQuickAssistProcessor"
+            >
+      </quickAssistProcessor>
+   </extension> 
 </plugin>

@@ -71,10 +71,9 @@ public class ToFinalRefactoring extends Refactoring {
 				fFieldDeclaration = (FieldDeclaration) fField
 						.findNode(fJavaAST);
 				fFragment = getDeclaration(fFieldDeclaration);
-				AssignmentsFinder finder = new AssignmentsFinder(
-						(IVariableBinding) fFragment.getName().resolveBinding());
-				fJavaAST.accept(finder);
-				if (!finder.canVariableBeFinal()) {
+				boolean canVariableBeFinal = AssignmentsFinder.canVariableBeFinal(
+						(IVariableBinding) fFragment.getName().resolveBinding(), fJavaAST);
+				if (!canVariableBeFinal) {
 					status.addFatalError(CANNOT_REFACTOR_FIELD);
 				}
 			} else {
@@ -87,6 +86,8 @@ public class ToFinalRefactoring extends Refactoring {
 		}
 		return status;
 	}
+
+
 
 	private boolean doesFieldMatchesInitialConditions()
 			throws JavaModelException {
