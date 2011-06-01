@@ -29,6 +29,7 @@ import org.eclipse.text.edits.MultiTextEdit;
 import arz.jdt.AssignmentsFinder;
 import arz.jdt.AstTools;
 import arz.jdt.FieldDeclarationChanger;
+import arz.jdt.FinalModifierAdder;
 
 public class ToFinalRefactoring extends Refactoring {
 
@@ -40,18 +41,7 @@ public class ToFinalRefactoring extends Refactoring {
 	private VariableDeclarationFragment fFragment;
 	private CompilationUnit fJavaAST;
 
-	private void addFinalModifierToDeclaration(ASTRewrite astRewrite)
-			throws JavaModelException {
-		new FieldDeclarationChanger(fFieldDeclaration, fJavaAST.getAST()) {
-			@Override
-			public void editFieldDeclaration(
-					FieldDeclaration newFieldDeclaration) {
-				newFieldDeclaration.modifiers().add(
-						fJavaAST.getAST().newModifier(
-								ModifierKeyword.FINAL_KEYWORD));
-			}
-		}.applyEdition(astRewrite);
-	}
+
 
 	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm)
@@ -66,13 +56,12 @@ public class ToFinalRefactoring extends Refactoring {
 
 		try {
 			pm.beginTask("checkInititalConditions", 0);
-			if (doesFieldMatchesInitialConditions()) {
+			if (AstTools.fieldDeclarationCanBeFinal(fField)) {
 				fJavaAST = AstTools.ParseToJavaAst(pm, fCompilationUnit);
-				fFieldDeclaration = (FieldDeclaration) fField
-						.findNode(fJavaAST);
-				fFragment = getDeclaration(fFieldDeclaration);
-				boolean canVariableBeFinal = AssignmentsFinder.canVariableBeFinal(
-						(IVariableBinding) fFragment.getName().resolveBinding(), fJavaAST);
+				fFieldDeclaration = (FieldDeclaration) fField.findNode(fJavaAST);
+				fFragment = AstTools.getDeclarationFragmentByName(fFieldDeclaration, fField.getElementName());
+				boolean canVariableBeFinal = AssignmentsFinder.analyze(
+						(IVariableBinding) fFragment.getName().resolveBinding(), fJavaAST).canVariableBeFinal();
 				if (!canVariableBeFinal) {
 					status.addFatalError(CANNOT_REFACTOR_FIELD);
 				}
@@ -89,65 +78,16 @@ public class ToFinalRefactoring extends Refactoring {
 
 
 
-	private boolean doesFieldMatchesInitialConditions()
-			throws JavaModelException {
-		return fField != null && fField.exists() && fField.isStructureKnown()
-				&& !fField.getDeclaringType().isAnnotation()
-				&& Flags.isPrivate(fField.getFlags())
-				&& !Flags.isFinal(fField.getFlags());
-	}
 
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException,
 			OperationCanceledException {
-		ASTRewrite astRewrite = ASTRewrite.create(fJavaAST.getAST());
-		if (isThereOnlyOneDeclarationInTheLine()) {
-			addFinalModifierToDeclaration(astRewrite);
-		} else {
-			splitMultipleDeclaration(astRewrite);
-		}
-		return createChangeFromAstRewrite(astRewrite);
+		 return new FinalModifierAdder(fJavaAST.getAST(), fCompilationUnit, fFragment).addFinal();
 	}
 
-	private Change createChangeFromAstRewrite(ASTRewrite astRewrite)
-			throws JavaModelException {
-		CompilationUnitChange compilationUnitChange = new CompilationUnitChange(
-				"Make field Final", fCompilationUnit);
-		compilationUnitChange.setEdit(astRewrite.rewriteAST());
-		return compilationUnitChange;
-	}
 
-	private void createNewFieldDeclaration(ASTRewrite astRewrite) {
-		VariableDeclarationFragment variableDeclarationFragmentCopy = (VariableDeclarationFragment) ASTNode
-				.copySubtree(fJavaAST.getAST(), fFragment);
-		FieldDeclaration newFieldDeclaration = fJavaAST.getAST()
-				.newFieldDeclaration(variableDeclarationFragmentCopy);
-		newFieldDeclaration.setType((Type) ASTNode.copySubtree(
-				fJavaAST.getAST(), fFieldDeclaration.getType()));
-		newFieldDeclaration.modifiers().addAll(
-				ASTNode.copySubtrees(fJavaAST.getAST(),
-						fFieldDeclaration.modifiers()));
-		newFieldDeclaration.modifiers().add(
-				fJavaAST.getAST().newModifier(ModifierKeyword.FINAL_KEYWORD));
-		ListRewrite listRewrite = astRewrite.getListRewrite(
-				fFieldDeclaration.getParent(),
-				TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
-		listRewrite.insertAfter(newFieldDeclaration, fFieldDeclaration, null);
-	}
 
-	private VariableDeclarationFragment getDeclaration(
-			FieldDeclaration fieldDeclaration) {
-		VariableDeclarationFragment result = null;
-		for (Object decl : fieldDeclaration.fragments()) {
-			VariableDeclarationFragment fragment = (VariableDeclarationFragment) decl;
-			if (fragment.getName().getIdentifier()
-					.equals(fField.getElementName())) {
-				result = fragment;
-				break;
-			}
-		}
-		return result;
-	}
+
 
 	@Override
 	public String getName() {
@@ -159,9 +99,7 @@ public class ToFinalRefactoring extends Refactoring {
 		return null;
 	}
 
-	private boolean isThereOnlyOneDeclarationInTheLine() {
-		return fFieldDeclaration.fragments().size() == 1;
-	}
+
 
 	public void setCompilationUnit(ICompilationUnit compilationUnit) {
 		this.fCompilationUnit = compilationUnit;
@@ -171,17 +109,6 @@ public class ToFinalRefactoring extends Refactoring {
 		this.fField = field;
 	}
 
-	private void splitMultipleDeclaration(ASTRewrite astRewrite)
-			throws JavaModelException {
-		createNewFieldDeclaration(astRewrite);
-		new FieldDeclarationChanger(fFieldDeclaration, fJavaAST.getAST()) {
-			@Override
-			public void editFieldDeclaration(
-					FieldDeclaration fieldDeclarationCopy) {
-				int index = fFieldDeclaration.fragments().indexOf(fFragment);
-				fieldDeclarationCopy.fragments().remove(index);
-			}
-		}.applyEdition(astRewrite);
-	}
+
 
 }

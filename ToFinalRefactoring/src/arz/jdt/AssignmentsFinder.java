@@ -13,12 +13,21 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.internal.corext.dom.ASTNodes;
 
+
+
 @SuppressWarnings("restriction")
-public class AssignmentsFinder {
-	private static class AssignmentsFinderVisitor extends ASTVisitor {
+public class AssignmentsFinder   {
+	
+	public interface AssigmentsFinderResult{
+		public boolean canVariableBeFinal();
+		public VariableDeclarationFragment getDeclarationFragment();
+	}
+	
+	private static class AssignmentsFinderVisitor extends ASTVisitor implements AssigmentsFinderResult {
 		private boolean isAssigned = false;
 		private IVariableBinding fVariable;
 		private ASTNode finlineInitializationExpression = null;
+		private VariableDeclarationFragment fFragment;
 
 		public AssignmentsFinderVisitor(IVariableBinding binding) {
 			fVariable = binding;
@@ -88,17 +97,23 @@ public class AssignmentsFinder {
 			if (isNameReferenceToVariable(fragment.getName())
 					&& fragment.getInitializer() != null) 
 			{
+				this.fFragment = fragment;
 				finlineInitializationExpression = fragment.getInitializer();
 			}
 			return true;
 		}
+
+		@Override
+		public VariableDeclarationFragment getDeclarationFragment() {
+			// TODO Auto-generated method stub
+			return fFragment;
+		}
 	}
 	
-	public static boolean canVariableBeFinal(IVariableBinding variableBinding,
+	public static AssigmentsFinderResult analyze(IVariableBinding variableBinding,
 			CompilationUnit javaAst) {
 		AssignmentsFinderVisitor finder = new AssignmentsFinderVisitor(variableBinding);
 		javaAst.accept(finder);
-		boolean canVariableBeFinal = finder.canVariableBeFinal();
-		return canVariableBeFinal;
+        return finder;
 	}
 }
