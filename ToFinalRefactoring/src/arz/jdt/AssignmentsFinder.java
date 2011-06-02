@@ -18,7 +18,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 public class AssignmentsFinder   {
 	
 	public interface AssigmentsFinderResult{
-		public boolean canVariableBeFinal();
+		public boolean canFieldBeFinal();
 		public VariableDeclarationFragment getDeclarationFragment();
 	}
 	
@@ -47,7 +47,7 @@ public class AssignmentsFinder   {
 		}
 
 		@Override
-		public boolean canVariableBeFinal() {
+		public boolean canFieldBeFinal() {
 			return finlineInitializationExpression != null && !isAssigned;
 		}
 

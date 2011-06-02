@@ -46,7 +46,7 @@ public class ToFinalQuickAssistProcessor implements IQuickAssistProcessor {
 					AssigmentsFinderResult result = AssignmentsFinder.analyze(
 							(IVariableBinding) binding, context.getASTRoot());
 
-					if (result.canVariableBeFinal()) {
+					if (result.canFieldBeFinal()) {
 						return new IJavaCompletionProposal[] { new ToFinalQuickAssistCompletionProposal(
 								"Make field final",
 								context.getCompilationUnit(),

@@ -47,9 +47,9 @@ public class ToFinalRefactoring extends Refactoring {
 				fJavaAST = AstTools.ParseToJavaAst(pm, fCompilationUnit);
 				fFieldDeclaration = (FieldDeclaration) fField.findNode(fJavaAST);
 				fFragment = AstTools.getDeclarationFragmentByName(fFieldDeclaration, fField.getElementName());
-				boolean canVariableBeFinal = AssignmentsFinder.analyze(
-						(IVariableBinding) fFragment.getName().resolveBinding(), fJavaAST).canVariableBeFinal();
-				if (!canVariableBeFinal) {
+				boolean canFieldBeFinal = AssignmentsFinder.analyze(
+						(IVariableBinding) fFragment.getName().resolveBinding(), fJavaAST).canFieldBeFinal();
+				if (!canFieldBeFinal) {
 					status.addFatalError(CANNOT_REFACTOR_FIELD);
 				}
 			} else {
