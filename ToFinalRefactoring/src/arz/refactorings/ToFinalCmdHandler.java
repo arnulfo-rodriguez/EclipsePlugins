@@ -28,7 +28,8 @@ public class ToFinalCmdHandler extends AbstractHandler {
    private SourceField fField;
    private ICompilationUnit fCompilationUnit;
 
-   public void dispose() {
+   @Override
+public void dispose() {
       // Do nothing
    }
 

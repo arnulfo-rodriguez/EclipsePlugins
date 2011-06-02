@@ -28,7 +28,8 @@ public class ToFinalPlugin extends AbstractUIPlugin {
     * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
     * )
     */
-   public void start(BundleContext context) throws Exception {
+   @Override
+public void start(BundleContext context) throws Exception {
       super.start(context);
       plugin = this;
    }
@@ -40,7 +41,8 @@ public class ToFinalPlugin extends AbstractUIPlugin {
     * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
     * )
     */
-   public void stop(BundleContext context) throws Exception {
+   @Override
+public void stop(BundleContext context) throws Exception {
       plugin = null;
       super.stop(context);
    }

@@ -1,34 +1,22 @@
 package arz.refactorings;
 
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IVariableBinding;
-import org.eclipse.jdt.core.dom.Modifier;
-import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
-import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
-import org.eclipse.jdt.core.refactoring.CompilationUnitChange;
 import org.eclipse.jdt.internal.core.SourceField;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.text.edits.MultiTextEdit;
 import arz.jdt.AssignmentsFinder;
 import arz.jdt.AstTools;
-import arz.jdt.FieldDeclarationChanger;
 import arz.jdt.FinalModifierAdder;
 
 public class ToFinalRefactoring extends Refactoring {
@@ -40,7 +28,6 @@ public class ToFinalRefactoring extends Refactoring {
 	private FieldDeclaration fFieldDeclaration;
 	private VariableDeclarationFragment fFragment;
 	private CompilationUnit fJavaAST;
-
 
 
 	@Override
@@ -76,18 +63,11 @@ public class ToFinalRefactoring extends Refactoring {
 		return status;
 	}
 
-
-
-
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException,
 			OperationCanceledException {
 		 return new FinalModifierAdder(fJavaAST.getAST(), fCompilationUnit, fFragment).addFinal();
 	}
-
-
-
-
 
 	@Override
 	public String getName() {
@@ -95,11 +75,8 @@ public class ToFinalRefactoring extends Refactoring {
 	}
 
 	public RefactoringStatus initialize(Map arguments) {
-		// TODO: implement this when I find a use case.
 		return null;
 	}
-
-
 
 	public void setCompilationUnit(ICompilationUnit compilationUnit) {
 		this.fCompilationUnit = compilationUnit;

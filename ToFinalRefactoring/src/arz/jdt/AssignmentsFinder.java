@@ -11,7 +11,6 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression.Operator;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.internal.corext.dom.ASTNodes;
 
 
 
@@ -47,6 +46,7 @@ public class AssignmentsFinder   {
 			return isNameReferenceToVariable(ref);
 		}
 
+		@Override
 		public boolean canVariableBeFinal() {
 			return finlineInitializationExpression != null && !isAssigned;
 		}

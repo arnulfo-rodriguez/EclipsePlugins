@@ -5,7 +5,6 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.text.edits.MultiTextEdit;
 
 public abstract class FieldDeclarationChanger {
    private FieldDeclaration fFieldDeclaration;

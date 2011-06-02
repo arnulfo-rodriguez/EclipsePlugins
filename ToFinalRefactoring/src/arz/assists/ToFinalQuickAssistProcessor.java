@@ -6,13 +6,9 @@ package arz.assists;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.internal.corext.dom.Bindings;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jdt.ui.text.java.IProblemLocation;
@@ -32,7 +28,6 @@ public class ToFinalQuickAssistProcessor implements IQuickAssistProcessor {
 
 	@Override
 	public boolean hasAssists(IInvocationContext context) throws CoreException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -41,21 +36,18 @@ public class ToFinalQuickAssistProcessor implements IQuickAssistProcessor {
 			IProblemLocation[] locations) throws CoreException {
 		ASTNode coveringNode = context.getCoveringNode();
 		if (coveringNode instanceof SimpleName) {
-			SimpleName fName = (SimpleName) coveringNode;
-			IBinding binding = fName.resolveBinding();
-			if (binding instanceof IVariableBinding
-					&& ((IVariableBinding) binding).isField()) {
-				IVariableBinding variableBinding = (IVariableBinding) binding;
+			SimpleName simpleName = (SimpleName) coveringNode;
+			IBinding binding = simpleName.resolveBinding();
+			if (bindingIsField(binding)) {
 
-				IField field = (IField) variableBinding.getJavaElement();
-
-				if (AstTools.fieldDeclarationCanBeFinal(field)) {
+				if (AstTools.fieldDeclarationCanBeFinal((IField) binding
+						.getJavaElement())) {
 
 					AssigmentsFinderResult result = AssignmentsFinder.analyze(
 							(IVariableBinding) binding, context.getASTRoot());
 
 					if (result.canVariableBeFinal()) {
-						return new IJavaCompletionProposal[] { (IJavaCompletionProposal) new ToFinalQuickAssistCompletionProposal(
+						return new IJavaCompletionProposal[] { new ToFinalQuickAssistCompletionProposal(
 								"Make field final",
 								context.getCompilationUnit(),
 								new FinalModifierAdder(context.getASTRoot()
@@ -68,6 +60,11 @@ public class ToFinalQuickAssistProcessor implements IQuickAssistProcessor {
 			}
 		}
 		return null;
+	}
+
+	private boolean bindingIsField(IBinding binding) {
+		return binding instanceof IVariableBinding
+				&& ((IVariableBinding) binding).isField();
 	}
 
 }
