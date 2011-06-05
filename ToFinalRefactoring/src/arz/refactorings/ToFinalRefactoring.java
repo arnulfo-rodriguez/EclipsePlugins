@@ -15,7 +15,7 @@ import org.eclipse.jdt.internal.core.SourceField;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import arz.jdt.AssignmentsFinder;
+import arz.jdt.MakeFieldFinalDetector;
 import arz.jdt.AstTools;
 import arz.jdt.FinalModifierAdder;
 
@@ -25,7 +25,6 @@ public class ToFinalRefactoring extends Refactoring {
 	private static final String NOT_A_FIELD = "The selection is not valid for this refactoring";
 	private ICompilationUnit fCompilationUnit;
 	private SourceField fField;
-	private FieldDeclaration fFieldDeclaration;
 	private VariableDeclarationFragment fFragment;
 	private CompilationUnit fJavaAST;
 
@@ -43,11 +42,11 @@ public class ToFinalRefactoring extends Refactoring {
 
 		try {
 			pm.beginTask("checkInititalConditions", 0);
-			if (AstTools.fieldDeclarationCanBeFinal(fField)) {
+			if (fField != null) {
 				fJavaAST = AstTools.ParseToJavaAst(pm, fCompilationUnit);
-				fFieldDeclaration = (FieldDeclaration) fField.findNode(fJavaAST);
+				FieldDeclaration fFieldDeclaration = (FieldDeclaration) fField.findNode(fJavaAST);
 				fFragment = AstTools.getDeclarationFragmentByName(fFieldDeclaration, fField.getElementName());
-				boolean canFieldBeFinal = AssignmentsFinder.analyze(
+				boolean canFieldBeFinal = MakeFieldFinalDetector.detect(
 						(IVariableBinding) fFragment.getName().resolveBinding(), fJavaAST).canFieldBeFinal();
 				if (!canFieldBeFinal) {
 					status.addFatalError(CANNOT_REFACTOR_FIELD);

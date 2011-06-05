@@ -6,6 +6,7 @@ package arz.assists;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -15,11 +16,10 @@ import org.eclipse.jdt.ui.text.java.IProblemLocation;
 import org.eclipse.jdt.ui.text.java.IQuickAssistProcessor;
 import org.eclipse.swt.graphics.Image;
 
-import arz.jdt.AssignmentsFinder;
-import arz.jdt.AssignmentsFinder.AssigmentsFinderResult;
+import arz.jdt.MakeFieldFinalDetector;
+import arz.jdt.MakeFieldFinalDetector.IAssigmentsFinderResult;
 import arz.jdt.AstTools;
 import arz.jdt.FinalModifierAdder;
-
 /**
  * @author arnulfo
  * 
@@ -32,37 +32,34 @@ public class ToFinalQuickAssistProcessor implements IQuickAssistProcessor {
 	}
 
 	@Override
-	public IJavaCompletionProposal[] getAssists(IInvocationContext context,
+	public IJavaCompletionProposal[] getAssists(final IInvocationContext context,
 			IProblemLocation[] locations) throws CoreException {
 		ASTNode coveringNode = context.getCoveringNode();
 		if (coveringNode instanceof SimpleName) {
 			SimpleName simpleName = (SimpleName) coveringNode;
 			IBinding binding = simpleName.resolveBinding();
-			if (bindingIsField(binding)) {
+			if (isFieldBinding(binding)) {
 
-				if (AstTools.fieldDeclarationCanBeFinal((IField) binding
-						.getJavaElement())) {
+				IAssigmentsFinderResult result = MakeFieldFinalDetector.detect(
+						(IVariableBinding) binding, 
+						context.getASTRoot());
 
-					AssigmentsFinderResult result = AssignmentsFinder.analyze(
-							(IVariableBinding) binding, context.getASTRoot());
-
-					if (result.canFieldBeFinal()) {
-						return new IJavaCompletionProposal[] { new ToFinalQuickAssistCompletionProposal(
-								"Make field final",
-								context.getCompilationUnit(),
-								new FinalModifierAdder(context.getASTRoot()
-										.getAST(),
-										context.getCompilationUnit(), result
-												.getDeclarationFragment())
-										.addFinal(), 1, (Image) null) };
-					}
+				if (result.canFieldBeFinal()) {
+					return new IJavaCompletionProposal[] { new ToFinalQuickAssistCompletionProposal(
+							"Make field final",
+							context.getCompilationUnit(),
+							new FinalModifierAdder(
+									context.getASTRoot()
+									.getAST(), context.getCompilationUnit(),
+									result.getDeclarationFragment()).addFinal(),
+							1, (Image) null) };
 				}
 			}
 		}
 		return null;
 	}
 
-	private boolean bindingIsField(IBinding binding) {
+	private boolean isFieldBinding(IBinding binding) {
 		return binding instanceof IVariableBinding
 				&& ((IVariableBinding) binding).isField();
 	}

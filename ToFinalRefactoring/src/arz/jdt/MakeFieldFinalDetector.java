@@ -1,5 +1,8 @@
 package arz.jdt;
 
+import org.eclipse.jdt.core.Flags;
+import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Assignment;
@@ -15,14 +18,27 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 
 @SuppressWarnings("restriction")
-public class AssignmentsFinder   {
+public class MakeFieldFinalDetector   {
 	
-	public interface AssigmentsFinderResult{
+	private static IAssigmentsFinderResult nullResult = new IAssigmentsFinderResult(){
+
+		@Override
+		public boolean canFieldBeFinal() {
+			return false;
+		}
+
+		@Override
+		public VariableDeclarationFragment getDeclarationFragment() {
+			return null;
+		}
+	};
+
+	public interface IAssigmentsFinderResult{
 		public boolean canFieldBeFinal();
 		public VariableDeclarationFragment getDeclarationFragment();
 	}
 	
-	private static class AssignmentsFinderVisitor extends ASTVisitor implements AssigmentsFinderResult {
+	private static class AssignmentsFinderVisitor extends ASTVisitor implements IAssigmentsFinderResult {
 		private boolean isAssigned = false;
 		private IVariableBinding fVariable;
 		private ASTNode finlineInitializationExpression = null;
@@ -110,10 +126,25 @@ public class AssignmentsFinder   {
 		}
 	}
 	
-	public static AssigmentsFinderResult analyze(IVariableBinding variableBinding,
-			CompilationUnit javaAst) {
-		AssignmentsFinderVisitor finder = new AssignmentsFinderVisitor(variableBinding);
-		javaAst.accept(finder);
-        return finder;
+	private static boolean fieldDeclarationCanBeFinal(IField field)
+	throws JavaModelException {
+return field != null && field.exists() && field.isStructureKnown()
+		&& !field.getDeclaringType().isAnnotation()
+		&& Flags.isPrivate(field.getFlags())
+		&& !Flags.isFinal(field.getFlags())
+		&& !field.isBinary();
+}
+	
+	public static IAssigmentsFinderResult detect(IVariableBinding variableBinding,
+			CompilationUnit compilationUnit) throws JavaModelException {
+
+		if (fieldDeclarationCanBeFinal((IField) variableBinding.getJavaElement()))
+		{
+		   AssignmentsFinderVisitor finder = new AssignmentsFinderVisitor(variableBinding);
+		   compilationUnit.accept(finder);
+	        return finder;
+		}else{
+			return nullResult;
+		}
 	}
 }

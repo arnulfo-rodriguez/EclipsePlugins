@@ -45,12 +45,6 @@ public class AstTools {
 		return result;
 	}
 
-	public static boolean fieldDeclarationCanBeFinal(IField field)
-			throws JavaModelException {
-		return field != null && field.exists() && field.isStructureKnown()
-				&& !field.getDeclaringType().isAnnotation()
-				&& Flags.isPrivate(field.getFlags())
-				&& !Flags.isFinal(field.getFlags());
-	}
+
 
 }
