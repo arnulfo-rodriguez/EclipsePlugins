@@ -7,6 +7,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
@@ -30,8 +31,6 @@ public class FinalModifierAdder {
 		this.fFragment = fragment;
 		this.fFieldDeclaration = (FieldDeclaration) fFragment.getParent();
 	}
-	
-	
 
 	public TextChange addFinal() throws CoreException, OperationCanceledException {
 		
@@ -46,14 +45,8 @@ public class FinalModifierAdder {
 
 	private void addFinalModifierToDeclaration(ASTRewrite astRewrite)
 			throws JavaModelException {
-		new FieldDeclarationChanger(fFieldDeclaration, fAst) {
-			@Override
-			public void editFieldDeclaration(
-					FieldDeclaration newFieldDeclaration) {
-				newFieldDeclaration.modifiers().add(
-						fAst.newModifier(ModifierKeyword.FINAL_KEYWORD));
-			}
-		}.applyEdition(astRewrite);
+		ListRewrite listRewrite = astRewrite.getListRewrite(fFieldDeclaration,FieldDeclaration.MODIFIERS2_PROPERTY);
+		listRewrite.insertAfter(fFieldDeclaration.getAST().newModifier(ModifierKeyword.FINAL_KEYWORD),(Modifier)fFieldDeclaration.modifiers().get(0), null);
 	}
 
 	private boolean isThereOnlyOneDeclarationInTheLine() {
@@ -63,14 +56,14 @@ public class FinalModifierAdder {
 	private void splitMultipleDeclaration(ASTRewrite astRewrite)
 			throws JavaModelException {
 		createNewFieldDeclaration(astRewrite);
-		new FieldDeclarationChanger(fFieldDeclaration, fAst) {
-			@Override
-			public void editFieldDeclaration(
-					FieldDeclaration fieldDeclarationCopy) {
-				int index = fFieldDeclaration.fragments().indexOf(fFragment);
-				fieldDeclarationCopy.fragments().remove(index);
-			}
-		}.applyEdition(astRewrite);
+		removeOldFragment(astRewrite);
+	}
+
+
+	private void removeOldFragment(ASTRewrite astRewrite)
+			throws JavaModelException {
+		ListRewrite listRewrite = astRewrite.getListRewrite(fFieldDeclaration,FieldDeclaration.FRAGMENTS_PROPERTY);
+		listRewrite.remove(fFragment, null);
 	}
 
 	private void createNewFieldDeclaration(ASTRewrite astRewrite) {

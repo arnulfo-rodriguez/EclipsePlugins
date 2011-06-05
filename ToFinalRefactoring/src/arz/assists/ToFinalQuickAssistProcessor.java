@@ -4,9 +4,7 @@
 package arz.assists;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -18,7 +16,6 @@ import org.eclipse.swt.graphics.Image;
 
 import arz.jdt.MakeFieldFinalDetector;
 import arz.jdt.MakeFieldFinalDetector.IAssigmentsFinderResult;
-import arz.jdt.AstTools;
 import arz.jdt.FinalModifierAdder;
 /**
  * @author arnulfo
