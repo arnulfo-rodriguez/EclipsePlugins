@@ -42,6 +42,4 @@ public class AstTools {
 		return result;
 	}
 
-
-
 }

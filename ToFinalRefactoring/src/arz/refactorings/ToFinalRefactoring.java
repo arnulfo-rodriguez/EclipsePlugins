@@ -15,9 +15,10 @@ import org.eclipse.jdt.internal.core.SourceField;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import arz.jdt.MakeFieldFinalDetector;
+
 import arz.jdt.AstTools;
 import arz.jdt.FinalModifierAdder;
+import arz.jdt.MakeFieldFinalDetector;
 
 public class ToFinalRefactoring extends Refactoring {
 
@@ -46,9 +47,8 @@ public class ToFinalRefactoring extends Refactoring {
 				fJavaAST = AstTools.ParseToJavaAst(pm, fCompilationUnit);
 				FieldDeclaration fFieldDeclaration = (FieldDeclaration) fField.findNode(fJavaAST);
 				fFragment = AstTools.getDeclarationFragmentByName(fFieldDeclaration, fField.getElementName());
-				boolean canFieldBeFinal = MakeFieldFinalDetector.detect(
-						(IVariableBinding) fFragment.getName().resolveBinding(), fJavaAST).canFieldBeFinal();
-				if (!canFieldBeFinal) {
+				
+				if (!MakeFieldFinalDetector.detect((IVariableBinding) fFragment.getName().resolveBinding(), fJavaAST)) {
 					status.addFatalError(CANNOT_REFACTOR_FIELD);
 				}
 			} else {

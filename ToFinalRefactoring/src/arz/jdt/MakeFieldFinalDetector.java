@@ -15,34 +15,12 @@ import org.eclipse.jdt.core.dom.PrefixExpression.Operator;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
+public class MakeFieldFinalDetector {
 
-
-@SuppressWarnings("restriction")
-public class MakeFieldFinalDetector   {
-	
-	private static IAssigmentsFinderResult nullResult = new IAssigmentsFinderResult(){
-
-		@Override
-		public boolean canFieldBeFinal() {
-			return false;
-		}
-
-		@Override
-		public VariableDeclarationFragment getDeclarationFragment() {
-			return null;
-		}
-	};
-
-	public interface IAssigmentsFinderResult{
-		public boolean canFieldBeFinal();
-		public VariableDeclarationFragment getDeclarationFragment();
-	}
-	
-	private static class AssignmentsFinderVisitor extends ASTVisitor implements IAssigmentsFinderResult {
+	private static class AssignmentsFinderVisitor extends ASTVisitor {
 		private boolean isAssigned = false;
 		private IVariableBinding fVariable;
 		private ASTNode finlineInitializationExpression = null;
-		private VariableDeclarationFragment fFragment;
 
 		public AssignmentsFinderVisitor(IVariableBinding binding) {
 			fVariable = binding;
@@ -62,7 +40,6 @@ public class MakeFieldFinalDetector   {
 			return isNameReferenceToVariable(ref);
 		}
 
-		@Override
 		public boolean canFieldBeFinal() {
 			return finlineInitializationExpression != null && !isAssigned;
 		}
@@ -111,40 +88,34 @@ public class MakeFieldFinalDetector   {
 		@Override
 		public boolean visit(VariableDeclarationFragment fragment) {
 			if (isNameReferenceToVariable(fragment.getName())
-					&& fragment.getInitializer() != null) 
-			{
-				this.fFragment = fragment;
+					&& fragment.getInitializer() != null) {
 				finlineInitializationExpression = fragment.getInitializer();
 			}
 			return true;
 		}
-
-		@Override
-		public VariableDeclarationFragment getDeclarationFragment() {
-			// TODO Auto-generated method stub
-			return fFragment;
-		}
 	}
-	
-	private static boolean fieldDeclarationCanBeFinal(IField field)
-	throws JavaModelException {
-return field != null && field.exists() && field.isStructureKnown()
-		&& !field.getDeclaringType().isAnnotation()
-		&& Flags.isPrivate(field.getFlags())
-		&& !Flags.isFinal(field.getFlags())
-		&& !field.isBinary();
-}
-	
-	public static IAssigmentsFinderResult detect(IVariableBinding variableBinding,
-			CompilationUnit compilationUnit) throws JavaModelException {
 
-		if (fieldDeclarationCanBeFinal((IField) variableBinding.getJavaElement()))
-		{
-		   AssignmentsFinderVisitor finder = new AssignmentsFinderVisitor(variableBinding);
-		   compilationUnit.accept(finder);
-	        return finder;
-		}else{
-			return nullResult;
-		}
+	private static boolean checkDeclaration(IField field)
+			throws JavaModelException {
+		return field != null && field.exists() && field.isStructureKnown()
+				&& !field.getDeclaringType().isAnnotation()
+				&& Flags.isPrivate(field.getFlags())
+				&& !Flags.isFinal(field.getFlags()) && !field.isBinary();
+	}
+
+	public static boolean detect(
+			IVariableBinding variableBinding, CompilationUnit compilationUnit)
+			throws JavaModelException {
+
+		return checkDeclaration((IField) variableBinding.getJavaElement()) && checkAssignments(variableBinding, compilationUnit);
+		
+	}
+
+	private static boolean checkAssignments(
+			IVariableBinding variableBinding, CompilationUnit compilationUnit) {
+		AssignmentsFinderVisitor finder = new AssignmentsFinderVisitor(
+				variableBinding);
+		compilationUnit.accept(finder);
+		return finder.canFieldBeFinal();
 	}
 }
