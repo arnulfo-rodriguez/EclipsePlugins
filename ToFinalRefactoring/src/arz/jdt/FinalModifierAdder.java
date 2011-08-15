@@ -23,17 +23,18 @@ public class FinalModifierAdder {
 	private FieldDeclaration fFieldDeclaration;
 	private VariableDeclarationFragment fFragment;
 	private ICompilationUnit fCompilationUnit;
-	
-	
-	public FinalModifierAdder(AST ast,ICompilationUnit compilationUnit,VariableDeclarationFragment fragment) {
+
+	public FinalModifierAdder(AST ast, ICompilationUnit compilationUnit,
+			VariableDeclarationFragment fragment) {
 		this.fAst = ast;
 		this.fCompilationUnit = compilationUnit;
 		this.fFragment = fragment;
 		this.fFieldDeclaration = (FieldDeclaration) fFragment.getParent();
 	}
 
-	public TextChange addFinal() throws CoreException, OperationCanceledException {
-		
+	public TextChange addFinal() throws CoreException,
+			OperationCanceledException {
+
 		ASTRewrite astRewrite = ASTRewrite.create(fAst);
 		if (isThereOnlyOneDeclarationInTheLine()) {
 			addFinalModifierToDeclaration(astRewrite);
@@ -45,8 +46,12 @@ public class FinalModifierAdder {
 
 	private void addFinalModifierToDeclaration(ASTRewrite astRewrite)
 			throws JavaModelException {
-		ListRewrite listRewrite = astRewrite.getListRewrite(fFieldDeclaration,FieldDeclaration.MODIFIERS2_PROPERTY);
-		listRewrite.insertAfter(fFieldDeclaration.getAST().newModifier(ModifierKeyword.FINAL_KEYWORD),(Modifier)fFieldDeclaration.modifiers().get(0), null);
+		ListRewrite listRewrite = astRewrite.getListRewrite(fFieldDeclaration,
+				FieldDeclaration.MODIFIERS2_PROPERTY);
+		listRewrite.insertAfter(
+				fFieldDeclaration.getAST().newModifier(
+						ModifierKeyword.FINAL_KEYWORD),
+				(Modifier) fFieldDeclaration.modifiers().get(0), null);
 	}
 
 	private boolean isThereOnlyOneDeclarationInTheLine() {
@@ -59,10 +64,10 @@ public class FinalModifierAdder {
 		removeOldFragment(astRewrite);
 	}
 
-
 	private void removeOldFragment(ASTRewrite astRewrite)
 			throws JavaModelException {
-		ListRewrite listRewrite = astRewrite.getListRewrite(fFieldDeclaration,FieldDeclaration.FRAGMENTS_PROPERTY);
+		ListRewrite listRewrite = astRewrite.getListRewrite(fFieldDeclaration,
+				FieldDeclaration.FRAGMENTS_PROPERTY);
 		listRewrite.remove(fFragment, null);
 	}
 

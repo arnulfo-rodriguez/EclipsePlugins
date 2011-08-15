@@ -103,16 +103,16 @@ public class MakeFieldFinalDetector {
 				&& !Flags.isFinal(field.getFlags()) && !field.isBinary();
 	}
 
-	public static boolean detect(
-			IVariableBinding variableBinding, CompilationUnit compilationUnit)
-			throws JavaModelException {
+	public static boolean detect(IVariableBinding variableBinding,
+			CompilationUnit compilationUnit) throws JavaModelException {
 
-		return checkDeclaration((IField) variableBinding.getJavaElement()) && checkAssignments(variableBinding, compilationUnit);
-		
+		return checkDeclaration((IField) variableBinding.getJavaElement())
+				&& checkAssignments(variableBinding, compilationUnit);
+
 	}
 
-	private static boolean checkAssignments(
-			IVariableBinding variableBinding, CompilationUnit compilationUnit) {
+	private static boolean checkAssignments(IVariableBinding variableBinding,
+			CompilationUnit compilationUnit) {
 		AssignmentsFinderVisitor finder = new AssignmentsFinderVisitor(
 				variableBinding);
 		compilationUnit.accept(finder);

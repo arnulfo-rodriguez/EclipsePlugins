@@ -29,7 +29,6 @@ public class ToFinalRefactoring extends Refactoring {
 	private VariableDeclarationFragment fFragment;
 	private CompilationUnit fJavaAST;
 
-
 	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm)
 			throws CoreException, OperationCanceledException {
@@ -45,10 +44,13 @@ public class ToFinalRefactoring extends Refactoring {
 			pm.beginTask("checkInititalConditions", 0);
 			if (fField != null) {
 				fJavaAST = AstTools.ParseToJavaAst(pm, fCompilationUnit);
-				FieldDeclaration fFieldDeclaration = (FieldDeclaration) fField.findNode(fJavaAST);
-				fFragment = AstTools.getDeclarationFragmentByName(fFieldDeclaration, fField.getElementName());
-				
-				if (!MakeFieldFinalDetector.detect((IVariableBinding) fFragment.getName().resolveBinding(), fJavaAST)) {
+				FieldDeclaration fFieldDeclaration = (FieldDeclaration) fField
+						.findNode(fJavaAST);
+				fFragment = AstTools.getDeclarationFragmentByName(
+						fFieldDeclaration, fField.getElementName());
+
+				if (!MakeFieldFinalDetector.detect((IVariableBinding) fFragment
+						.getName().resolveBinding(), fJavaAST)) {
 					status.addFatalError(CANNOT_REFACTOR_FIELD);
 				}
 			} else {
@@ -65,7 +67,8 @@ public class ToFinalRefactoring extends Refactoring {
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException,
 			OperationCanceledException {
-		 return new FinalModifierAdder(fJavaAST.getAST(), fCompilationUnit, fFragment).addFinal();
+		return new FinalModifierAdder(fJavaAST.getAST(), fCompilationUnit,
+				fFragment).addFinal();
 	}
 
 	@Override
@@ -84,7 +87,5 @@ public class ToFinalRefactoring extends Refactoring {
 	public void setField(SourceField field) {
 		this.fField = field;
 	}
-
-
 
 }

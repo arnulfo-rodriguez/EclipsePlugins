@@ -9,28 +9,28 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 public class ToFinalDescriptor extends RefactoringDescriptor {
 
-   public static final String REFACTORING_ID = "arz.refactorings.string.to.final";
+	public static final String REFACTORING_ID = "arz.refactorings.string.to.final";
 
-   private final Map fArguments;
+	private final Map fArguments;
 
-   public ToFinalDescriptor(String project, String description, String comment,
-         Map arguments) {
-      super(REFACTORING_ID, project, description, comment,
-            RefactoringDescriptor.STRUCTURAL_CHANGE
-                  | RefactoringDescriptor.MULTI_CHANGE);
-      fArguments = arguments;
-   }
+	public ToFinalDescriptor(String project, String description,
+			String comment, Map arguments) {
+		super(REFACTORING_ID, project, description, comment,
+				RefactoringDescriptor.STRUCTURAL_CHANGE
+						| RefactoringDescriptor.MULTI_CHANGE);
+		fArguments = arguments;
+	}
 
-   @Override
-   public Refactoring createRefactoring(RefactoringStatus status)
-         throws CoreException {
-      ToFinalRefactoring refactoring = new ToFinalRefactoring();
-      status.merge(refactoring.initialize(fArguments));
-      return refactoring;
-   }
+	@Override
+	public Refactoring createRefactoring(RefactoringStatus status)
+			throws CoreException {
+		ToFinalRefactoring refactoring = new ToFinalRefactoring();
+		status.merge(refactoring.initialize(fArguments));
+		return refactoring;
+	}
 
-   public Map getArguments() {
-      return fArguments;
-   }
+	public Map getArguments() {
+		return fArguments;
+	}
 
 }
